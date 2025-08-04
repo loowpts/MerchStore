@@ -1,0 +1,45 @@
+{% extends 'shop/base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+    <h1>{{ product.name }}</h1>
+    <div class="row">
+        <div class="col-md-6">
+            {% if product.main_image %}
+                <img src="{{ product.main_image.url }}" class="img-fluid mb-3" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300" class="img-fluid mb-3" alt="Нет изображения">
+            {% endif %}
+            {% if product.images.all %}
+                <h5>Дополнительные изображения:</h5>
+                <div class="row">
+                    {% for image in product.images.all %}
+                        <div class="col-md-4 mb-2">
+                            <img src="{{ image.image.url }}" class="img-fluid" alt="Дополнительное изображение">
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <p><strong>Категория:</strong> {{ product.category.name }}</p>
+            <p><strong>Цена:</strong> {{ product.price }} руб.</p>
+            <p><strong>Описание:</strong> {{ product.description|linebreaks }}</p>
+            <p><strong>В наличии:</strong> {{ product.stock }} шт.</p>
+            {% if product.product_sizes.all %}
+                <p><strong>Размеры:</strong></p>
+                <ul>
+                    {% for product_size in product.product_sizes.all %}
+                        <li>{{ product_size.size.name }} ({{ product_size.stock }} шт.)</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p><strong>Доступен:</strong> {% if product.available %}Да{% else %}Нет{% endif %}</p>
+            <p><strong>Создан:</strong> {{ product.created|date:"d F Y" }}</p>
+            {% if user.is_authenticated and user == product.user %}
+                <a href="{% url 'shop:product_update' product.pk %}" class="btn btn-warning">Редактировать</a>
+                <a href="{% url 'shop:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+            {% endif %}
+            <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </div>
+{% endblock %}

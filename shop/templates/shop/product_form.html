@@ -1,0 +1,72 @@
+{% extends 'shop/base.html' %}
+{% block title %}{{ title|default:'Добавить товар' }}{% endblock %}
+{% block content %}
+    <h1>{{ title|default:'Добавить товар' }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div class="text-danger">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="text-danger">{{ form.description.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.price.id_for_label }}" class="form-label">{{ form.price.label }}</label>
+            {{ form.price }}
+            {% if form.price.errors %}
+                <div class="text-danger">{{ form.price.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.main_image.id_for_label }}" class="form-label">{{ form.main_image.label }}</label>
+            {{ form.main_image }}
+            {% if form.main_image.errors %}
+                <div class="text-danger">{{ form.main_image.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.stock.id_for_label }}" class="form-label">{{ form.stock.label }}</label>
+            {{ form.stock }}
+            {% if form.stock.errors %}
+                <div class="text-danger">{{ form.stock.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+            {{ form.category }}
+            {% if form.category.errors %}
+                <div class="text-danger">{{ form.category.errors }}</div>
+            {% endif %}
+            {% if not form.category.queryset %}
+                <div class="text-warning">Нет доступных категорий. Пожалуйста, добавьте категории в админ-панели.</div>
+            {% endif %}
+        </div>
+        <h5>Дополнительные фото</h5>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            <div class="mb-3 formset-row">
+                <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <div class="text-danger">{{ form.image.errors }}</div>
+                {% endif %}
+                {% if form.DELETE %}
+                    <div class="form-check">
+                        {{ form.DELETE }}
+                        <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Удалить</label>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+{% endblock %}

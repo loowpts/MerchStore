@@ -1,0 +1,36 @@
+{% extends 'shop/base.html' %}
+{% block title %}Список товаров{% endblock %}
+{% block content %}
+    <h1>Товары</h1>
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Поиск товаров...">
+            <button type="submit" class="btn btn-primary">Поиск</button>
+        </div>
+    </form>
+    <div class="row">
+        {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Нет изображения">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                        <p class="card-text"><strong>Цена:</strong> {{ product.price }} руб.</p>
+                        <a href="{% url 'shop:product_detail' product.slug %}" class="btn btn-primary">Подробнее</a>
+                        {% if user.is_authenticated and user == product.user %}
+                            <a href="{% url 'shop:product_update' product.pk %}" class="btn btn-warning">Редактировать</a>
+                            <a href="{% url 'shop:product_delete' product.pk %}" class="btn btn-danger">Удалить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Товары не найдены.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends 'shop/base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+    <h1>Добро пожаловать в наш магазин!</h1>
+    <p>Текущая дата и время: {{ current_datetime }}</p>
+    <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Посмотреть товары</a>
+{% endblock %}

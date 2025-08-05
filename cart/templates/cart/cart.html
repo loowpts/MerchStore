@@ -1,0 +1,77 @@
+{% extends 'shop/base.html' %}
+{% block title %}Корзина{% endblock %}
+{% block content %}
+    <h1>Ваша корзина</h1>
+    {% if cart_items %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Товар</th>
+                    <th>Цена за единицу</th>
+                    <th>Количество</th>
+                    <th>Общая стоимость</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.price }} руб.</td>
+                        <td>
+                            <input type="number" class="form-control quantity-input"
+                                   data-cart-product-id="{{ item.id }}"
+                                   data-cart-id="{{ cart.id }}"
+                                   value="{{ item.quantity }}" min="1" style="width: 80px;">
+                        </td>
+                        <td class="item-total">{{ item.total_price|floatformat:2 }} руб.</td>
+                        <td>
+                            <a href="{% url 'cart:delete_cart_product' item.product.slug %}" class="btn btn-danger btn-sm">Удалить</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h4>Общая сумма: <span id="cart-total">{{ cart.total_price|floatformat:2 }} руб.</span></h4>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Продолжить покупки</a>
+    {% else %}
+        <p>Ваша корзина пуста.</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Перейти к товарам</a>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const cartProductId = this.getAttribute('data-cart-product-id');
+                    const cartId = this.getAttribute('data-cart-id');
+                    const newQuantity = this.value;
+
+                    fetch("{% url 'cart:update_cart_product' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: `cart_product_id=${cartProductId}&new_quantity=${newQuantity}&cart_id=${cartId}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const row = this.closest('tr');
+                            row.querySelector('.item-total').textContent = `${data.cart_product_total_price.toFixed(2)} руб.`;
+                            document.getElementById('cart-total').textContent = `${data.cart_total_price.toFixed(2)} руб.`;
+                        } else {
+                            alert('Ошибка при обновлении количества: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        alert('Произошла ошибка: ' + error);
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'shop/base.html' %}
+{% block title %}Подробности заказа #{{ order.id }}{% endblock %}
+{% block content %}
+    <h1>Подробности заказа #{{ order.id }}</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <p><strong>Дата создания:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
+    <p><strong>Статус:</strong> {{ order.get_status_display }}</p>
+    <p><strong>Адрес доставки:</strong> {{ order.shipping_address }}</p>
+    <p><strong>Номер телефона:</strong> {{ order.phone_number }}</p>
+    <h4>Товары в заказе</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Размер</th>
+                <th>Цена за единицу</th>
+                <th>Количество</th>
+                <th>Общая стоимость</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.size.name }}</td>
+                    <td>{{ item.price|floatformat:2 }} руб.</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.total_price|floatformat:2 }} руб.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h4>Общая сумма: {{ order.total_price|floatformat:2 }} руб.</h4>
+    <a href="{% url 'orders:order_list' %}" class="btn btn-secondary">Назад к заказам</a>
+    <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Продолжить покупки</a>
+{% endblock %}

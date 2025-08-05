@@ -2,11 +2,19 @@
 {% block title %}Корзина{% endblock %}
 {% block content %}
     <h1>Ваша корзина</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     {% if cart_items %}
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Товар</th>
+                    <th>Размер</th>
                     <th>Цена за единицу</th>
                     <th>Количество</th>
                     <th>Общая стоимость</th>
@@ -17,7 +25,8 @@
                 {% for item in cart_items %}
                     <tr>
                         <td>{{ item.product.name }}</td>
-                        <td>{{ item.product.price }} руб.</td>
+                        <td>{{ item.size.name }}</td>
+                        <td>{{ item.product.price|floatformat:2 }} руб.</td>
                         <td>
                             <input type="number" class="form-control quantity-input"
                                    data-cart-product-id="{{ item.id }}"
@@ -26,7 +35,7 @@
                         </td>
                         <td class="item-total">{{ item.total_price|floatformat:2 }} руб.</td>
                         <td>
-                            <a href="{% url 'cart:delete_cart_product' item.product.slug %}" class="btn btn-danger btn-sm">Удалить</a>
+                            <a href="{% url 'cart:delete_cart_product' item.product.slug %}?size_id={{ item.size.id }}" class="btn btn-danger btn-sm">Удалить</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -34,6 +43,7 @@
         </table>
         <h4>Общая сумма: <span id="cart-total">{{ cart.total_price|floatformat:2 }} руб.</span></h4>
         <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Продолжить покупки</a>
+        <a href="{% url 'orders:order_create' %}" class="btn btn-primary">Оформить заказ</a>
     {% else %}
         <p>Ваша корзина пуста.</p>
         <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Перейти к товарам</a>

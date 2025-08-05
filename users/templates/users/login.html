@@ -2,6 +2,13 @@
 {% block title %}Вход{% endblock %}
 {% block content %}
     <h1>Вход</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
     <form method="post">
         {% csrf_token %}
         <div class="mb-3">

@@ -1,0 +1,42 @@
+{% extends 'shop/base.html' %}
+{% block title %}Мои заказы{% endblock %}
+{% block content %}
+    <h1>Мои заказы</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if orders %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Номер заказа</th>
+                    <th>Дата создания</th>
+                    <th>Статус</th>
+                    <th>Общая сумма</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>{{ order.get_status_display }}</td>
+                        <td>{{ order.total_price|floatformat:2 }} руб.</td>
+                        <td>
+                            <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-primary btn-sm">Подробности</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>У вас нет заказов.</p>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-primary">Перейти к товарам</a>
+    {% endif %}
+    <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Продолжить покупки</a>
+{% endblock %}

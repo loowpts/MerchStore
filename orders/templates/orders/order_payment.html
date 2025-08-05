@@ -1,0 +1,19 @@
+{% extends 'shop/base.html' %}
+{% block title %}Оплата заказа #{{ order.id }}{% endblock %}
+{% block content %}
+    <h1>Оплата заказа #{{ order.id }}</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'success' %}success{% else %}danger{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <p><strong>Общая сумма:</strong> {{ order.total_price|floatformat:2 }} руб.</p>
+    <p>Это демонстрационная страница оплаты. Нажмите "Оплатить" для продолжения.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Оплатить</button>
+        <a href="{% url 'orders:order_detail' order.id %}" class="btn btn-secondary">Отмена</a>
+    </form>
+{% endblock %}

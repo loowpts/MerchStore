@@ -1,0 +1,27 @@
+{% extends 'shop/base.html' %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+    <h1>Ваш профиль</h1>
+    <p><strong>Имя пользователя:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.address.id_for_label }}" class="form-label">{{ form.address.label }}</label>
+            {{ form.address }}
+            {% if form.address.errors %}
+                <div class="text-danger">{{ form.address.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.phone_number.id_for_label }}" class="form-label">{{ form.phone_number.label }}</label>
+            {{ form.phone_number }}
+            {% if form.phone_number.errors %}
+                <div class="text-danger">{{ form.phone_number.errors }}</div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'shop:product_list' %}" class="btn btn-secondary">Назад</a>
+    </form>
+    <a href="{% url 'users:logout' %}" class="btn btn-danger mt-3">Выйти</a>
+{% endblock %}
